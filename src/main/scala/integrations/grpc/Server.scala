@@ -26,28 +26,23 @@ object Server extends IOApp with StrictLogging {
   def helloService(port: Int)  =
      GreeterFs2Grpc.bindServiceResource(new ExampleImplementation(port))
 
-  def run(port: Int, service: ServerServiceDefinition)=
+  def runS(port: Int, service: ServerServiceDefinition)=
     NettyServerBuilder
       .forPort(port)
       .addService(service)
       .resource[IO]
       .evalMap(server => IO(server.start()))
-      .useForever
+      .use(_ => IO {
+                    logger.warn(s"${System.getProperty("os.name")} Press Ctrl+Z to exit...")
+                    while (System.in.read() != -1) {}
+                    logger.warn("Received end-of-file on stdin. Exiting")
+                    ExitCode.Success
+      })
 
   def run(args: scala.List[String]): cats.effect.IO[cats.effect.ExitCode] = {
     args.size match {
       case 1 =>
-        helloService(args(0).toInt).use(s => run(args(0).toInt, s))
-//            IO {
-//              logger.warn(s"${System.getProperty("os.name")} Press Ctrl+Z to exit...")
-//              while (System.in.read() != -1) {}
-//              logger.warn("Received end-of-file on stdin. Exiting")
-              // optional shutdown code here
-//            } *> IO.sleep(100.seconds)
-//          )
-//          .compile
-//          .drain
-//          .map(_ => ExitCode.Success)
+        helloService(args(0).toInt).use(s => runS(args(0).toInt, s))
       case _ =>
         IO {
           logger.warn("Please provide a port as an argument. Exiting")
