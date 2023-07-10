@@ -1,10 +1,10 @@
-syntax = "proto2";
+syntax = "proto3";
 
 package protomodels;
 
 message Person {
-  required string name = 1;
-  required int32 id = 2;
+  string name = 1;
+  int32 id = 2;
   optional string email = 3;
 
   enum PhoneType {
@@ -14,8 +14,8 @@ message Person {
   }
 
   message PhoneNumber {
-    required string number = 1;
-    optional PhoneType type = 2 [default = HOME];
+    string number = 1;
+    optional PhoneType type = 2;
   }
 
   repeated PhoneNumber phones = 4;
@@ -23,4 +23,13 @@ message Person {
 
 message AddressBook {
   repeated Person people = 1;
+}
+
+message PersonResponse {
+  int32 code = 1;
+  string message = 2;
+}
+
+service PersonAddressService {
+  rpc SaveAddress(Person) returns (PersonResponse) {}
 }
