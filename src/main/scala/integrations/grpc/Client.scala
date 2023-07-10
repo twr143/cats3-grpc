@@ -1,8 +1,8 @@
 package integrations.grpc
-import cats.implicits.*
+import cats.implicits._
 import cats.effect.{ExitCode, IO, IOApp, Resource}
 import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder
-import fs2.grpc.syntax.all.*
+import fs2.grpc.syntax.all._
 import io.grpc.ManagedChannel
 import grpc.model.hello._
 import io.grpc._

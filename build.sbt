@@ -2,7 +2,7 @@
 
 ThisBuild / useCoursier := false
 organization := "com.iv"
-scalaVersion := "3.1.0"
+scalaVersion := "2.12.17"
 version := "0.1.0-SNAPSHOT"
 name := "cats3-grpc"
 
