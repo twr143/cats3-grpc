@@ -22,6 +22,7 @@ val scalaCacheVersion = "0.28.0"
 Global / onChangedBuildSource := ReloadOnSourceChanges
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
+libraryDependencies += "com.typesafe" % "config" % "1.4.2"
 javacOptions ++= Seq("-encoding", "UTF-8")
 enablePlugins(DockerPlugin)
 enablePlugins(Fs2Grpc)
@@ -44,7 +45,9 @@ docker / dockerfile := {
     add(classpath.files, "/app/")
     // Add the JAR file
     add(jarFile, jarTarget)
+
+    env("PORT","8080")
     // On launch run Java with the classpath and the main class
-    entryPoint("java", vmArgs(0), vmArgs(1), vmArgs(2), vmArgs(3), "-cp", classpathString, mainclass, "8080")
+    entryPoint("java", vmArgs(0), vmArgs(1), vmArgs(2), vmArgs(3), "-cp", classpathString, mainclass)
   }
 }

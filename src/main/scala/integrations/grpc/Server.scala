@@ -5,6 +5,7 @@ package integrations.grpc
  */
 
 import cats.effect.{Deferred, ExitCode, IO, IOApp, Resource}
+import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.StrictLogging
 import fs2.Stream
 import fs2.grpc.syntax.all._
@@ -52,18 +53,13 @@ object Server extends IOApp with StrictLogging {
       .useForever
 
   def run(args: scala.List[String]): cats.effect.IO[cats.effect.ExitCode] = {
-    args.size match {
-      case 1 =>
-        val rs = for {
+    val config: Config = ConfigFactory.load()
+    val port = config.getString("port").toInt
+    val rs = for {
           addr <- addressService()
-          hello <- helloService(args.head.toInt)
+          hello <- helloService(port)
         } yield (addr, hello)
-        rs.use(s => runS(args.head.toInt, s._1, s._2))
-      case _ =>
-        IO {
-          logger.warn("Please provide a port as an argument. Exiting")
-          ExitCode.Success
-        }
+        rs.use(s => runS(port, s._1, s._2))
     }
-  }
+
 }
