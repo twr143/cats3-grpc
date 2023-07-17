@@ -4,7 +4,7 @@ package integrations.grpc
  * Created by Ilya Volynin on 02.12.2020 at 9:12.
  */
 
-import cats.effect.{ExitCode, IO, IOApp, Resource}
+import cats.effect.{Deferred, ExitCode, IO, IOApp, Resource}
 import com.typesafe.scalalogging.StrictLogging
 import fs2.Stream
 import fs2.grpc.syntax.all._
@@ -42,13 +42,14 @@ object Server extends IOApp with StrictLogging {
       .addService(helloService)
       .addService(addressService)
       .resource[IO]
-      .evalMap(server => IO(server.start()))
-      .use(_ => IO {
-        logger.warn(s"${System.getProperty("os.name")} Press Ctrl+Z to exit...")
-        while (System.in.read() != -1) {}
-        logger.warn("Received end-of-file on stdin. Exiting")
-        ExitCode.Success
-      })
+      .evalMap(server =>
+        for {
+          s <- IO(server.start())
+          _ <- IO(logger.warn("server is running..."))
+          d <- Deferred[IO, cats.effect.ExitCode]
+        } yield (s,d)
+      )
+      .useForever
 
   def run(args: scala.List[String]): cats.effect.IO[cats.effect.ExitCode] = {
     args.size match {

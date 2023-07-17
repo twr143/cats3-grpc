@@ -17,3 +17,4 @@ target/
 .vscode/
 /.idea/
 !/.gitignore
+/src/main/resources/cert/GOSTKNCA_ForteBank.p12

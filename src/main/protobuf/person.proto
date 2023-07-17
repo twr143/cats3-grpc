@@ -3,7 +3,7 @@ syntax = "proto3";
 package protomodels;
 
 message Person {
-  string name = 1;
+  optional string name = 1;
   int32 id = 2;
   optional string email = 3;
 
@@ -27,7 +27,7 @@ message AddressBook {
 
 message PersonResponse {
   int32 code = 1;
-  string message = 2;
+  optional string message = 2;
 }
 
 service PersonAddressService {

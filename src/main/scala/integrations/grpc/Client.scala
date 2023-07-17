@@ -39,7 +39,7 @@ object Client extends IOApp {
         .map(r => println(r.greeting))
         .compile
         .drain
-      addResp <- addrBookServ.saveAddress(Person("me", 1, Some("1@1.com"), Seq(PhoneNumber(number = "7777777777"))), new Metadata())
+      addResp <- addrBookServ.saveAddress(Person(Some("me"), 1, Some("1@1.com"), Seq(PhoneNumber(number = "7777777777"))), new Metadata())
       _ <- IO(println(addResp.code + " " + addResp.message))
     } yield ()
   }
