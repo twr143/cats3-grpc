@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-demo-core
+  labels:
+    app: grpc-demo-core
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 50%
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: grpc-demo-core
+  template:
+    metadata:
+      labels:
+        app: grpc-demo-core
+    spec:
+      containers:
+        - name: grpc-demo-core
+          image: com.iv/cats3-grpc
+          imagePullPolicy: Never
+          env:
+            - name: TZ
+              value: Europe/Moscow
+            - name: PORT
+              value: "8080"

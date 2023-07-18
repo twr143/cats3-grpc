@@ -34,6 +34,7 @@ docker / dockerfile := {
   val classpath = (Compile / managedClasspath).value
   val mainclass = (Compile / packageBin / mainClass).value.getOrElse(sys.error("Expected exactly one main class"))
   val jarTarget = s"/app/${jarFile.getName}"
+  val rsc = (Compile / resourceDirectory).value
   // Make a colon separated classpath with the JAR file
   val classpathString = classpath.files.map("/app/" + _.getName)
     .mkString(":") + ":" + jarTarget
@@ -46,8 +47,14 @@ docker / dockerfile := {
     // Add the JAR file
     add(jarFile, jarTarget)
 
-    env("PORT","8080")
+    copy(rsc / "cert", "/root/cert")
+
     // On launch run Java with the classpath and the main class
-    entryPoint("java", vmArgs(0), vmArgs(1), vmArgs(2), vmArgs(3), "-cp", classpathString, mainclass)
+    entryPoint("java", vmArgs(0), vmArgs(1), vmArgs(2), vmArgs(3), vmArgs(4), vmArgs(5), "-cp", classpathString, mainclass)
   }
+  // дополнительно после push:
+  // minikube image load com.iv/cats3-grpc
+  // minikube image ls --format table
+  // kubectl apply -f deployment.yaml
+  // kubectl exec -it <Pod_Name>  -- /bin/bash  /sh
 }
